@@ -5,11 +5,26 @@
  *      Author: James
  */
 #include "../include/s5p4418_uart.h"
+#if 0
+int putchar(int c)
+{
+    while((UART0->UARTFR & UARTFR_TXFF)&&(UART0->UARTFR & UARTFR_BUSY));
+            UART0->UARTDR = c;
+     
+    return c;
+}
+#else
+void _putchar(char character)
+{
+    while((UART0->UARTFR & UARTFR_TXFF)&&(UART0->UARTFR & UARTFR_BUSY));
+        UART0->UARTDR = character;
+}
+#endif
 
 void UART_Init(UART_TypeDef* UARTx, UART_InitTypeDef* UART_InitStruct)
 {
 	uint32_t IBRD, FBRD;
-	uint32_t temp, remainder,uclk = 10*000*000;
+	uint32_t temp, remainder,uclk = 11000000;
 
 	temp = 16 * UART_InitStruct->UART_BaudRate;
 	IBRD = (uint32_t)(uclk / temp);
@@ -46,12 +61,15 @@ void UART_SendData(UART_TypeDef* UARTx, unsigned char * Data)
 		while((UARTx->UARTFR & UARTFR_TXFF)&&(UARTx->UARTFR & UARTFR_BUSY));
 		UARTx->UARTDR = Data[i];
 	}
+
+    while((UARTx->UARTFR & UARTFR_TXFF)&&(UARTx->UARTFR & UARTFR_BUSY));
 	UARTx->UARTDR = 0x0D;
+    while((UARTx->UARTFR & UARTFR_TXFF)&&(UARTx->UARTFR & UARTFR_BUSY));
 	UARTx->UARTDR = 0x0A;
 }
 
 void UART_ReceiveData(UART_TypeDef* UARTx, unsigned char * Data)
-{	
+{
 	uint32_t i;
 	for(i = 0;; i++){
 		if(!(UARTx->UARTFR & UARTFR_RXFE))

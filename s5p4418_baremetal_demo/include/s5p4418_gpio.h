@@ -141,7 +141,7 @@ typedef struct
 #define GPIOE              ((GPIO_TypeDef *) GPIOE_BASE)
 
 void S5P4418_GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct);
-void S5P4418_GPIO_StructInit(GPIO_InitTypeDef* GPIO_InitStruct);
+void GPIO_StructInit(GPIO_InitTypeDef* GPIO_InitStruct);
 void GPIO_SetBits(GPIO_TypeDef* GPIOx, uint32_t GPIO_Pin);
 void GPIO_ResetBits(GPIO_TypeDef* GPIOx, uint32_t GPIO_Pin);
 

@@ -23,13 +23,13 @@ OBJS	:= $(patsubst %.S,%.o,$(addprefix $(DIR_OBJ)/,$(notdir $(STR))))
 OBJ 	+= $(patsubst %.S,%.o,$(addprefix $(DIR_OBJ)/,$(notdir $(STR))))
 
 all:Interface $(OBJS) $(OBJA) $(OBJC)
-	arm-linux-ld -Tlink.ld $(OBJ) -o ${MAIN_TAR}
+	arm-linux-ld -Tlink.ld $(OBJ) -lgcc -L/opt/toolchain/FriendlyARM/4.9.3/lib/gcc/arm-cortexa9-linux-gnueabihf/4.9.3 -o ${MAIN_TAR}
 	arm-linux-objcopy -I elf32-littlearm -O binary $(MAIN_TAR) $(BIN_TAR)
 	@echo "Compiled!"
 
 
 $(filter %.o,$(OBJC)):$(DIR_OBJ)/%.o:$(DIR_SRC)/%.c
-	arm-linux-gcc -c $< -o $@
+	arm-linux-gcc -std=c99 -Iinclude -c $< -o $@
 $(filter %.o,$(OBJA)):$(DIR_OBJ)/%.o:$(DIR_ASM)/%.S
 	arm-linux-gcc -c $< -o $@
 $(filter %.o,$(OBJS)):$(DIR_OBJ)/%.o:$(DIR_STR)/%.S

@@ -18,12 +18,33 @@
  * MPEG		PLL2	/MPEGBCLK:400	/MPEGPCLK:200
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "printf.h"
 #include "../include/s5p4418.h"
 
-int main(){
+void delay(unsigned int time)
+{
+    while(time--);
+}
+
+int raise(int signum)
+{
+    return 0;
+}
+
+int main(void)
+{
 	unsigned char temp[10]={0};
-	s5p4418_IRQ_Init(VIC0,VIC0_VEC,VIC1,VIC1_VEC);
-	UART_ClockInit(UART0CLK);
+    char str_buf[] = "HeHe NiDaYe!!!\r\n";
+    uint32_t count = 0;
+    
+    //S5P4418_CLK_Init();
+
+	//s5p4418_IRQ_Init(VIC0,VIC0_VEC,VIC1,VIC1_VEC);
+	//UART_ClockInit(UART0CLK);
+
 	GPIO_InitTypeDef GPIO_InitStruct;
 	GPIO_StructInit(&GPIO_InitStruct);
 	/*LED INIT*/
@@ -32,25 +53,27 @@ int main(){
 	GPIO_InitStruct.GPIO_Mode = Output_Mode;
 	GPIO_InitStruct.GPIO_PuPd = Pull_Up;
 	S5P4418_GPIO_Init(GPIOB,&GPIO_InitStruct);
-	GPIO_SetBits(GPIOB,GPIO_Pin_12);
+	GPIO_SetBits(GPIOB, GPIO_Pin_12);
+
 	/*UART INIT*/
 	UART_InitTypeDef UART_InitStruct;
 	UART_StructInit(&UART_InitStruct);
-	UART_Init(UART0,&UART_InitStruct);
-		while(1)
-		{	
-			UART_ReceiveData(UART0,temp);
-			if(temp){			
-				GPIO_SetBits(GPIOB,GPIO_Pin_12);
-				UART_SendData(UART0,"LED OFF");
-				udelay(1000000);
-			}
-			else{
-				GPIO_ResetBits(GPIOB,GPIO_Pin_12);
-				UART_SendData(UART0,"LED ON");
-				udelay(1000000);
-			}
-		}
+	UART_Init(UART0, &UART_InitStruct);
+
+    while(1)
+    {
+        GPIO_SetBits(GPIOB, GPIO_Pin_12);
+        UART_SendData(UART0, "LED OFF");
+        udelay(1000000);
+
+        GPIO_ResetBits(GPIOB, GPIO_Pin_12);
+        UART_SendData(UART0, "LED ON");
+        udelay(1000000);
+        
+        //sprintf(str_buf, "led count=%d\r\n", count++);
+        printf("hello world ^_^ %d\r\n", count++);
+    }
+
 	return 0;
 }
 
